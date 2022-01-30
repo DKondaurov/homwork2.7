@@ -32,8 +32,7 @@ public class EmployeeServiceImpl implements EmployeeService {
     @Override
     public Employee addEmployee(String lastName, String firstName) {
         if (employeeMap.containsKey(lastName + " " + firstName)) {
-            Employee newEmp = new Employee("ранее", "был");
-            return newEmp;
+            throw new EmployeeAlreadyExistsException();
         } else {
             Employee newEmp = new Employee(lastName, firstName);
             employeeMap.put(lastName + " " + firstName, newEmp);
