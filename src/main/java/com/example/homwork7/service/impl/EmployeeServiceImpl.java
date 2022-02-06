@@ -1,9 +1,10 @@
 package com.example.homwork7.service.impl;
 
 import com.example.homwork7.data.Employee;
-import com.example.homwork7.exception.EmployeeAlreadyExistsException;
+import com.example.homwork7.exception.InvalidRequestException;
 import com.example.homwork7.exception.EmployeeIsNotFoundException;
 import com.example.homwork7.service.EmployeeService;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 
 import java.util.HashMap;
@@ -35,30 +36,45 @@ public class EmployeeServiceImpl implements EmployeeService {
 
     @Override
     public Employee addEmployee(String lastName, String firstName, int department, int salary) {
-        if (employeeMap.containsKey(lastName + " " + firstName)) {
-            throw new EmployeeAlreadyExistsException();
+        if (StringUtils.isAlpha(lastName + firstName)) {
+            lastName = StringUtils.capitalize(lastName);
+            firstName = StringUtils.capitalize(firstName);
+            if (employeeMap.containsKey(lastName + " " + firstName)) {
+                throw new InvalidRequestException();
+            }
+            Employee newEmp = new Employee(lastName, firstName, department, salary);
+            employeeMap.put(lastName + " " + firstName, newEmp);
+            return newEmp;
         }
-        Employee newEmp = new Employee(lastName, firstName, department, salary);
-        employeeMap.put(lastName + " " + firstName, newEmp);
-        return newEmp;
+        throw new InvalidRequestException();
     }
 
 
     @Override
     public String deleteEmployee(String lastName, String firstName) {
-        if (employeeMap.containsKey(lastName + " " + firstName)) {
-            employeeMap.remove(lastName + " " + firstName);
-            return lastName + " " + firstName;
+        if (StringUtils.isAlpha(lastName + firstName)) {
+            lastName = StringUtils.capitalize(lastName);
+            firstName = StringUtils.capitalize(firstName);
+            if (employeeMap.containsKey(lastName + " " + firstName)) {
+                employeeMap.remove(lastName + " " + firstName);
+                return lastName + " " + firstName;
+            }
+            throw new EmployeeIsNotFoundException();
         }
-        throw new EmployeeIsNotFoundException();
+        throw new InvalidRequestException();
     }
 
     @Override
     public Employee findEmployee(String lastName, String firstName) {
-        if (employeeMap.containsKey(lastName + " " + firstName)) {
-            return employeeMap.get(lastName + " " + firstName);
+        if (StringUtils.isAlpha(lastName + firstName)) {
+            lastName = StringUtils.capitalize(lastName);
+            firstName = StringUtils.capitalize(firstName);
+            if (employeeMap.containsKey(lastName + " " + firstName)) {
+                return employeeMap.get(lastName + " " + firstName);
+            }
+            throw new EmployeeIsNotFoundException();
         }
-        throw new EmployeeIsNotFoundException();
+        throw new InvalidRequestException();
     }
 
     @Override
