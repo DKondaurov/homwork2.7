@@ -31,15 +31,12 @@ public class DepartmentController {
         return departmentService.employeeWithMinSalaryDepartment(department);
     }
 
-    //localhost:8080/departments/all
+    //localhost:8080/departments/all?department=5
     @GetMapping("/departments/all")
-    public Collection<Employee> findAllEmployeesAndDepartment() {
-        return departmentService.allEmployeesAndDepartment();
-    }
-
-    //localhost:8080/departments/all?departmentId=5
-    @GetMapping("/departments/all")
-    public Collection<Employee> findAllEmployeesInDepartment(@RequestParam("departmentId") int department) {
+    public Collection<Employee> findAllEmployeesInDepartment(@RequestParam(required = false) Integer department) {
+        if (department == null) {
+            return departmentService.allEmployeesAndDepartment();
+        }
         return departmentService.allEmployeesInDepartment(department);
     }
 }
